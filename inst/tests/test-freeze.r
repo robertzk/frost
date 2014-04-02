@@ -53,5 +53,8 @@ test_that("it can compute cross-references from multiple reference lists", {
   expect_identical(frozens$three, list(y = 2))
 })
 
-
-
+test_that("it errors on circular references", {
+  one <- list(x = ref(two))
+  two <- list(x = ref(one))
+  expect_error(freeze(one, two), 'circularly points to another reference')
+})

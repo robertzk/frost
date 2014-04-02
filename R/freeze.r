@@ -21,13 +21,20 @@ freeze <- function(..., out = c(1)) {
       if (is.null(names(sublist))) seq_along(sublist)
       else ifelse(names(sublist) == "", as.list(seq_along(sublist)), as.list(names(sublist)))
     structure(lapply(seq_along(sublist), function(index) {
-      if (is.ref(sublist[[index]])) {
-        res <- Reduce(`[[`,
-          c(as.character(sublist[[index]]), keychain, sublist_names[[index]]), lists)
-        #, error = function(e) if (grepl('out of bounds', e$message, fixed = TRUE))
-        if (is.ref(res)) stop("Frost reference '", as.character(sublist[[index]]),
-                              "' points to another reference")
-        else res
+      if (is.ref(cur <- sublist[[index]])) {
+        used_refs <- as.character(cur)
+        # Follow the rabbit hole! We are going after references to references
+        while (is.ref(cur)) {
+          # Find the reference in another nested list with the same keychain
+          cur <- Reduce(`[[`,
+            c(as.character(sublist[[index]]), keychain, sublist_names[[index]]), lists)
+
+          if (is.ref(cur) && as.character(cur) %in% used_refs)
+            stop("Frost reference '", as.character(cur),
+                 "' circularly points to another reference")
+          else if (is.ref(cur)) used_refs[length(used_refs)] <- as.character(cur)
+        }
+        cur
       } else if (is.list(sublist[[index]]))
         nested_replace(sublist[[index]], append(keychain, sublist_names[[index]]))
       else sublist[[index]]
