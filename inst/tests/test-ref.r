@@ -8,3 +8,6 @@ test_that("the is.ref function works", {
   expect_true(is.ref(ref(test)))
 })
 
+test_that("it can convert a character to a reference", {
+  expect_equal(as.character(ref("test")), "test")
+})
