@@ -8,6 +8,7 @@
 #' @return a list of lists corresponding to the \code{out} parameter
 #'    with values cross-referentially computed. If \code{length(out) == 1},
 #'    that list will be returned (and not wrapped in a 1-element list).
+#' @export
 #' @examples
 #' one <- list(a = 1, b = list(c = ref(two), d = 2))
 #' two <- list(a = ref(one), b = list(c = 3, d = 4))
@@ -31,6 +32,7 @@ freeze <- function(..., out = c(1)) {
 
           if (is.ref(cur) && as.character(cur) %in% used_refs)
             stop("Frost reference '", as.character(cur),
+
                  "' circularly points to another reference")
           else if (is.ref(cur)) used_refs[length(used_refs) + 1] <- as.character(cur)
         }

@@ -1,0 +1,29 @@
+\name{freeze}
+\alias{freeze}
+\title{Compute the cross-reference of N lists}
+\usage{
+freeze(..., out = c(1))
+}
+\arguments{
+  \item{...}{a list of lists. These will be interpolated
+  using each other's references. (see examples)}
+
+  \item{out}{integer vector. A list of indices from
+  \code{...} whose computed static lists should be
+  returned. The default value is \code{1}.}
+}
+\value{
+a list of lists corresponding to the \code{out} parameter
+with values cross-referentially computed. If
+\code{length(out) == 1}, that list will be returned (and
+not wrapped in a 1-element list).
+}
+\description{
+Compute the cross-reference of N lists
+}
+\examples{
+one <- list(a = 1, b = list(c = ref(two), d = 2))
+two <- list(a = ref(one), b = list(c = 3, d = 4))
+process_one <- freeze(one, two)  # process_one$b$c is now 3
+}
+
