@@ -14,7 +14,7 @@
 #' process_one <- freeze(one, two)  # process_one$b$c is now 3
 freeze <- function(..., out = c(1)) {
   lists <- list(...) 
-  names(lists) <- as.list(match.call())[-1]
+  names(lists) <- as.list(match.call())[-c(1, which('out' == names(match.call())))]
 
   nested_replace <- function(sublist, keychain = list()) {
     sublist_names <-
@@ -22,7 +22,9 @@ freeze <- function(..., out = c(1)) {
       else ifelse(names(sublist) == "", as.list(seq_along(sublist)), as.list(names(sublist)))
     structure(lapply(seq_along(sublist), function(index) {
       if (is.ref(sublist[[index]])) {
-        res <- Reduce(`[[`, append(append(list(as.character(sublist[[index]])), keychain), index), lists)
+        res <- Reduce(`[[`,
+          c(as.character(sublist[[index]]), keychain, sublist_names[[index]]), lists)
+        #, error = function(e) if (grepl('out of bounds', e$message, fixed = TRUE))
         if (is.ref(res)) stop("Frost reference '", as.character(sublist[[index]]),
                               "' points to another reference")
         else res
