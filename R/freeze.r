@@ -14,17 +14,26 @@
 #' process_one <- freeze(one, two)  # process_one$b$c is now 3
 freeze <- function(..., out = c(1)) {
   lists <- list(...) 
-  names(lists) <- match.call()[-1]
+  names(lists) <- as.list(match.call())[-1]
+
   nested_replace <- function(sublist, keychain = list()) {
-    lapply(seq_len(sublist), function(index) {
-      if (is.ref(sublist[[index]]))
-        Reduce(`[[`, append(append(list(as.character(sublist[[index]])), keychain), index), lists)
-      else if (is.list(sublist[[index]]))
-        nested_replace(sublist[[index]], append(keychain, names(sublist)[[index]] %||% index))
+    sublist_names <-
+      if (is.null(names(sublist))) seq_along(sublist)
+      else ifelse(names(sublist) == "", as.list(seq_along(sublist)), as.list(names(sublist)))
+    structure(lapply(seq_along(sublist), function(index) {
+      if (is.ref(sublist[[index]])) {
+        res <- Reduce(`[[`, append(append(list(as.character(sublist[[index]])), keychain), index), lists)
+        if (is.ref(res)) stop("Frost reference '", as.character(sublist[[index]]),
+                              "' points to another reference")
+        else res
+      } else if (is.list(sublist[[index]]))
+        nested_replace(sublist[[index]], append(keychain, sublist_names[[index]]))
       else sublist[[index]]
-    })
+    }), .Names = names(sublist))
   }
 
-
+  res <- lapply(lists, nested_replace)[out]
+  if (length(out) == 1) res[[1]]
+  else res
 }
 
