@@ -76,3 +76,10 @@ test_that("it can resolve a complicated reference chain", {
   expect_identical(frozens$three, list(z = 5, y = list(2), a = 3, c = list(c = 1, a = 3)))
 })
 
+test_that("it can detect a complicated circular reference chain", {
+  one <- list(a = 1, b = list(ref(two), 2), c = 3)
+  two <- list(a = 5, b = list(ref(three), 2), c = 3)
+  three <- list(a = 5, b =  list(ref(one)), c = 4)
+  expect_error(freeze(one, two, three), 'circularly points to another reference')
+})
+

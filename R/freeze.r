@@ -13,6 +13,7 @@
 #' two <- list(a = ref(one), b = list(c = 3, d = 4))
 #' process_one <- freeze(one, two)  # process_one$b$c is now 3
 freeze <- function(..., out = c(1)) {
+  # TODO: Re-write this function to use a graph visitation algorithm
   lists <- list(...) 
   names(lists) <- as.list(match.call())[-c(1, which('out' == names(match.call())))]
 
