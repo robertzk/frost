@@ -26,13 +26,12 @@ freeze <- function(..., out = c(1)) {
         # Follow the rabbit hole! We are going after references to references
         while (is.ref(cur)) {
           # Find the reference in another nested list with the same keychain
-          cur <- Reduce(`[[`,
-            c(as.character(sublist[[index]]), keychain, sublist_names[[index]]), lists)
+          cur <- Reduce(`[[`, c(as.character(cur), keychain, sublist_names[[index]]), lists)
 
           if (is.ref(cur) && as.character(cur) %in% used_refs)
             stop("Frost reference '", as.character(cur),
                  "' circularly points to another reference")
-          else if (is.ref(cur)) used_refs[length(used_refs)] <- as.character(cur)
+          else if (is.ref(cur)) used_refs[length(used_refs) + 1] <- as.character(cur)
         }
         cur
       } else if (is.list(sublist[[index]]))

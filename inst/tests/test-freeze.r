@@ -58,3 +58,21 @@ test_that("it errors on circular references", {
   two <- list(x = ref(one))
   expect_error(freeze(one, two), 'circularly points to another reference')
 })
+
+test_that("it can resolve a simple reference chain", {
+  one <- list(x = ref(two))
+  two <- list(x = ref(three))
+  three <- list(x = 1)
+  expect_identical(freeze(one, two, three), three)
+})
+
+test_that("it can resolve a complicated reference chain", {
+  one <- list(a = ref(two), b = 2, y = list(ref(three), 1), c = list(a = ref(two)))
+  two <- list(a = 3, y = list(ref(three), 2), c = list(b = 1, a = ref(three)))
+  three <- list(z = 5, y = list(2), a = ref(one), c = list(c = 1, a = 3))
+  frozens <- freeze(one, two, three, out = seq_len(3))
+  expect_identical(frozens$one, list(a = 3, b = 2, y = list(2, 1), c = list(a =  3)))
+  expect_identical(frozens$two, list(a = 3, y = list(2, 2), c = list(b = 1, a = 3)))
+  expect_identical(frozens$three, list(z = 5, y = list(2), a = 3, c = list(c = 1, a = 3)))
+})
+
