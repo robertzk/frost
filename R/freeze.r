@@ -16,7 +16,8 @@
 freeze <- function(..., out = c(1)) {
   # TODO: Re-write this function to use a graph visitation algorithm
   lists <- list(...) 
-  names(lists) <- as.list(match.call())[-c(1, which('out' == names(match.call())))]
+  if (is.null(names(lists)))
+    names(lists) <- as.list(match.call())[-c(1, which('out' == names(match.call())))]
 
   nested_replace <- function(sublist, keychain = list()) {
     sublist_names <-

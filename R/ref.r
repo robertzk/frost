@@ -8,7 +8,7 @@
 #' @docType class
 #' @export
 ref <- function(x) {
-  if (is.character(x)) ref_obj <- x
+  if (tryCatch(is.character(x), error = function(.) FALSE)) ref_obj <- x
   else ref_obj <- deparse(substitute(x))
   class(ref_obj) <- c("frostRef")
   ref_obj
