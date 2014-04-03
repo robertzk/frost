@@ -1,7 +1,7 @@
 #' Frost
 #'
-#' Frost allows one to take homogeneously structured nested list
-#' and introduce cross-references. For example, if we hav
+#' Frost allows one to take homogeneously structured nested lists
+#' and introduce cross-references. For example, if we have
 #'
 #' \code{one <- list(a = 1, b = list(c = ref(two), d = 2))}
 #' \code{two <- list(a = ref(one), b = list(c = 3, d = 4))}
