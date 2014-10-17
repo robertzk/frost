@@ -10,4 +10,5 @@ License: MIT
 LazyData: true
 Suggests:
     knitr,
-    microbenchmark
+    microbenchmark,
+    testthat
