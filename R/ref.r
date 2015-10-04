@@ -14,6 +14,11 @@ ref <- function(x) {
   ref_obj
 }
 
+#' Whether or not an object is a frost reference.
+#'
+#' @param x ANY. Any R object.
+#' @return whether or not it is a frost reference of S3 class
+#'    \code{"frostRef"}.
 #' @export
 is.ref <- function(x) inherits(x, "frostRef")
 
